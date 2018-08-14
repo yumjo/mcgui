@@ -35,8 +35,10 @@ wget https://github.com/nfc-tools/libnfc/releases/download/libnfc-1.7.1/libnfc-1
 tar xvjf libnfc-1.7.1.tar.bz2
 cd libnfc-1.7.1
 if [ $os == $ubuntuOS ]; then
-	sudo apt-get install pcsc-tools libpcsclite1 libpcsclite-dev libusb-0.1-4 libusb-dev libtool build-essential git libglib2.0-dev pcscd -y
-	autoreconf -vis
+	# needed for livebuild or won't find packages
+	sudo add-apt-repository universe
+	sudo apt-get install pcsc-tools libpcsclite1 libpcsclite-dev libusb-0.1-4 libusb-dev libtool build-essential git libglib2.0-dev pcscd libnfc-bin libtool-bin -y
+	autoreconf -vis --force # force because libtool version mismatch error
 	./configure --with-drivers=acr122_usb --prefix=/usr --sysconfdir=/etc
 	make clean all
 	sudo make install
@@ -69,6 +71,9 @@ cd ./mfcuk-r65
 git reset --hard 1b6d022
 autoreconf -is
 LIBNFC_CFLAGS=-I${userDir}/prefix/include LIBNFC_LIBS="-L${userDir}/prefix/lib -lnfc" ./configure --prefix=${userDir}/prefix
+if [ $os == $ubuntuOS ]; then
+	sudo awk 'NR==197 {$0="LIBS = $(LIBNFC_LIBS)"} 1' ${userDir}/mfcuk-r65/src/Makefile | sudo tee ${userDir}/mfcuk-r65/src/Makefile > /dev/null 	
+fi
 make
 # to run: 
 # cd to executable mfcuk file
