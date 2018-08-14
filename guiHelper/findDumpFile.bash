@@ -38,8 +38,8 @@ cdDir=$baseDir/cardDumps/
 filename="${cdDir}${uid}/${uid}_dump.hex"
 
 if [ -f "$filename" ]; then # if loaded key file exists
-	echo "Found card dump file for this UID. See below for file contents."	
+	echo "Found dumpfile ${filename} -- See below for file contents."	
 	hexdump -vC $filename
 else
-	echo "No card dump file found for this UID."
+	echo "No dumpfile found for this UID."
 fi

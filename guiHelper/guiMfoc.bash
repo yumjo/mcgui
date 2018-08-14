@@ -37,6 +37,14 @@ while true; do
     esac
 done
 
+if [ ! -d $uidDir ]; then
+  mkdir $uidDir
+fi
+
+if [ ! -f "$keyFile" ]; then
+	touch $keyFile # create since does not exist
+fi
+
 if [ -f "$filename" ]; then # if loaded key file exists
 	mfoc -O $dumpFile -f $filename
 	retval=$?
@@ -45,8 +53,10 @@ else
 	retval=$?
 fi
 
-if [ retVal == 0 ]; then
-	echo -e "\nNested attack was successful!"	
+if [ "$retVal" == 0 ] || [ -z "$retVal"]; then
+	./guiHelper/getKeysFromDump.py $dumpFile $keyFile
+	echo -e "\nNested attack was successful!"
+	echo -e "Click Update Files button on Cracking Tab to see changes."	
 fi
 echo -e "\nPress Enter to close the terminal."
 read line

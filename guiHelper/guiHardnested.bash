@@ -75,7 +75,9 @@ while [ $cracked -eq 0 ]; do
 
     if [ ! -s $partialDumpFile ]; then # if file empty, card cracked
         cracked=1;
+	./guiHelper/getKeysFromDump.py $dumpFile $keyFile
 	echo -e "\nHard nested attack was successful!"
+	echo -e "Click Update Files button on Cracking Tab to see changes."
     else 
         echo "Running hard nested attack" 
         # to run: ./libnfc_crypto1_crack <known key> <for block> <A|B> <target block> <A|B> <key file>

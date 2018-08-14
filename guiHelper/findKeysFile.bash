@@ -39,8 +39,8 @@ filename="${cdDir}${uid}/${uid}_keys.txt"
 #echo $filename
 
 if [ -f "$filename" ]; then # if loaded key file exists
-	echo "Found key file for this UID. See below for any keys."	
+	echo "Found keyfile ${filename} -- See below for any keys."	
 	cat $filename
 else
-	echo "No key file found for this UID."
+	echo "No keyfile found for this UID."
 fi
