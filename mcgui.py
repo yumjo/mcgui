@@ -5,10 +5,7 @@ from tkinter import ttk
 from tkinter import messagebox
 from tkinter import filedialog
 from tkinter import scrolledtext
-
 import subprocess
-from multiprocessing import Pool
-#import os
 
 class MifareGUI:
 	def __init__(self):
@@ -117,7 +114,10 @@ class MifareGUI:
 		self.unloadDumpfileBtn = ttk.Button(self.fileLabel, text="Unload File", command=self.unload_dumpfile)
 		self.loadDumpfileBtn = ttk.Button(self.fileLabel, text="Choose File", command=self.load_dumpfile)
 		self.dumpfileLoaded = False
+		# Update files
+		self.updateBtn = ttk.Button(self.fileLabel, text="Update Files", command=self.update_files)
 		# packing (pack opposite to how appear because side='bottom')
+		self.updateBtn.pack(in_=self.fileLabel, padx=10, pady=10, side='bottom', anchor=E)
 		self.loadDumpfileLabel.pack(expand=1, ipadx=5, ipady=10, padx=10, pady=10, side='bottom')
 		self.unloadDumpfileBtn.pack(in_=self.loadDumpfileLabel, side='bottom', anchor=E)
 		self.loadDumpfileBtn.pack(in_=self.loadDumpfileLabel, side='bottom', anchor=E)
@@ -182,21 +182,55 @@ class MifareGUI:
 		output = self.run_command_output(["bash", self.findKeysFile, "-u", uid])	
 		self.delete_all_text(self.sectorKeysText)		
 		self.insert_text(self.sectorKeysText, output)
-		checkWord = output.split()[0]
-		if(checkWord == b'Found'):
+		checkput = output.split()
+		if(checkput[0] == b'Found'):
+			self.keyfile.set(checkput[2].decode('utf-8'))
+			self.keyfileLoaded = True
 			return True
 		else:
 			return False
+		self.insert_outputBox("")
 
 	def update_dump(self, uid):
 		output = self.run_command_output(["bash", self.findDumpFile, "-u", uid])	
 		self.delete_all_text(self.cardDumpText)		
 		self.insert_text(self.cardDumpText, output)
-		checkWord = output.split()[0]
-		if(checkWord == b'Found'):
+		checkput = output.split()
+		if(checkput[0] == b'Found'):
+			self.dumpfile.set(checkput[2].decode('utf-8'))
+			self.dumpfileLoaded = True
 			return True
 		else:
 			return False
+		self.insert_outputBox("")
+	
+	def update_files(self):
+		if (self.keyfileLoaded == True):
+			self.insert_outputBox("Using " + self.keyfile.get() + " to update sector keys.")
+			# add keys to card information			
+			self.delete_all_text(self.sectorKeysText)
+			filename = self.keyfile.get()			
+			file = open(filename, "rt")
+			self.insert_text(self.sectorKeysText, "Sector keys updated.\n")
+			self.insert_text(self.sectorKeysText, file.read())
+			file.close()
+			self.insert_outputBox("Card Information updated with sector keys.")
+		else:
+			self.insert_outputBox("No keyfile loaded to update.")
+		if (self.dumpfileLoaded == True):
+			self.dumpfileLoaded = True
+			filename = self.dumpfile.get()
+			self.dumpfile.set(filename)
+			self.insert_outputBox("Using " + self.dumpfile.get() + " to update card dump.")
+			# add dump to card information			
+			self.delete_all_text(self.cardDumpText)			
+			self.insert_text(self.cardDumpText, "Dumpfile updated.\n")
+			output = self.run_command_output(["hexdump", "-vC", filename])
+			self.insert_text(self.cardDumpText, output)
+			self.insert_outputBox("Card Information updated with card dump.")
+		else:
+			self.insert_outputBox("No dumpfile loaded to update.")
+		self.insert_outputBox("")
 
 	# File Functions 
 	def load_keyfile(self):
@@ -362,12 +396,13 @@ class MifareGUI:
 			result1 = self.update_keys(self.uid)
 			result2 = self.update_dump(self.uid)
 			if(result1 == True):
-				self.insert_outputBox("Found key file for this UID.")
+				self.insert_outputBox("Found keyfile for this UID.")
 			if(result2 == True):
-				self.insert_outputBox("Found card dump file for this UID.")
+				self.insert_outputBox("Found dumpfile for this UID.")
 			messagebox.showinfo("Check Complete", "Valid card Found. Card Information tab updated.")
 		else:
 			messagebox.showerror("Attention", "Invalid Card or Error.")
+		self.insert_outputBox("")
 			
 def main():
 	MifareGUI().start()
