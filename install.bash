@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # to run: bash install.bash 
-# Tested on Fedora 28
+# Tested on Fedora 28 and Ubuntu 18.04.1 LTS
 
 # Useful web-pages:
 # https://github.com/nfc-tools
@@ -11,13 +11,12 @@
 
 source ./config.bash # load config environment variables
 
-mkdir $baseDir $cdDir $libnfcDir $acsDir $guiDir # $hnDir already created
+mkdir $cdDir $libnfcDir $acsDir # $baseDir, $guiDir, & $hnDir already created
 
-if [ $os == $ubuntuOS]; then
+if [ $os == $ubuntuOS ]; then
 	sudo apt-get install autoconf automake make -y
 	# hexdump/xxd works without hexedit install
-fi
-else
+else # Fedora
 	sudo dnf install autoconf automake hexedit -y # optional: sudo nano
 fi
 
@@ -35,7 +34,7 @@ cd $libnfcDir
 wget https://github.com/nfc-tools/libnfc/releases/download/libnfc-1.7.1/libnfc-1.7.1.tar.bz2
 tar xvjf libnfc-1.7.1.tar.bz2
 cd libnfc-1.7.1
-if [ $os == $ubuntuOS]; then
+if [ $os == $ubuntuOS ]; then
 	sudo apt-get install pcsc-tools libpcsclite1 libpcsclite-dev libusb-0.1-4 libusb-dev libtool build-essential git libglib2.0-dev pcscd -y
 	autoreconf -vis
 	./configure --with-drivers=acr122_usb --prefix=/usr --sysconfdir=/etc
@@ -43,7 +42,6 @@ if [ $os == $ubuntuOS]; then
 	sudo make install
 	sudo mkdir /etc/nfc
 	sudo cp libnfc.conf.sample /etc/nfc/libnf.conf
-fi
 else
 	sudo dnf install pcsc-tools pcsc-lite pcsc-lite-devel libusb-devel -y
 	sudo dnf install libnfc libnfc-devel libnfc-examples -y
@@ -60,7 +58,7 @@ cd $libnfcDir
 sudo wget https://github.com/nfc-tools/libnfc/releases/download/libnfc-1.5.1/libnfc-1.5.1.tar.gz
 tar xvzf libnfc-1.5.1.tar.gz
 cd libnfc-1.5.1 # inside directory
-./configure --prefix=/home/$userDir/prefix --with-drivers=acr122_pcsc --sysconfdir=/etc/nfc --enable-serial-autoprobe 
+./configure --prefix=${userDir}/prefix --sysconfdir=/etc/nfc --enable-serial-autoprobe 
 make && sudo make install
 rm $libnfcDir/libnfc-1.5.1.tar.gz -f
 
@@ -70,18 +68,17 @@ git clone https://github.com/nfc-tools/mfcuk.git mfcuk-r65 # need r65 version
 cd ./mfcuk-r65
 git reset --hard 1b6d022
 autoreconf -is
-LIBNFC_CFLAGS=-I/home/$userDir/prefix/include LIBNFC_LIBS="-L/home/$userDir/prefix/lib -lnfc" ./configure --prefix=/home/$userDir/prefix
+LIBNFC_CFLAGS=-I${userDir}/prefix/include LIBNFC_LIBS="-L${userDir}/prefix/lib -lnfc" ./configure --prefix=${userDir}/prefix
 make
 # to run: 
 # cd to executable mfcuk file
-# LD_LIBRARY_PATH=/home/$userDir/prefix/lib ./mfcuk -C -R 0:A -v 3
+# LD_LIBRARY_PATH=${userDir}prefix/lib ./mfcuk -C -R 0:A -v 3
 # this way, can specify which libnfc version to use
 
 # To make libnfc work (see libnfc readme troubleshooting section):
 # create blacklist and add pn533_usb
-if [ $os == $ubuntuOS]; then
+if [ $os == $ubuntuOS ]; then
 	sudo cp $libnfcDir/libnfc-1.7.1/contrib/linux/blacklist-libnfc.conf /etc/modprobe.d/blacklist-libnfc.conf
-fi
 else
 	sudo cp /usr/share/libnfc/blacklist-libnfc.conf /etc/modprobe.d/blacklist-libnfc.conf
 fi
@@ -89,10 +86,9 @@ sudo bash -c 'echo "blacklist pn533_usb" >> /etc/modprobe.d/blacklist-libnfc.con
 # sudo nano /etc/modprobe.d/blacklist-libnfc.conf # check blacklist
 
 # edit info.plist --> line 55, change ifdDriverOptions 0x0000 to 0x0005
-if [ $os == $ubuntuOS]; then
+if [ $os == $ubuntuOS ]; then
 	sudo awk 'NR==55 {$0="        <string>0x0005</string>"} 1' /etc/libccid_Info.plist | sudo tee /etc/libccid_Info.plist > /dev/null 
 #sudo nano /usr/lib64/pcsc/drivers/ifd-ccid.bundle/Contents/Info.plist #check
-fi
 else
 	sudo awk 'NR==55 {$0="'\t'<string>0x0005</string>"} 1' /usr/lib64/pcsc/drivers/ifd-ccid.bundle/Contents/Info.plist | sudo tee /usr/lib64/pcsc/drivers/ifdccid.bundle/Contents/Info.plist > /dev/null 
 #sudo nano /usr/lib64/pcsc/drivers/ifd-ccid.bundle/Contents/Info.plist #check
@@ -126,9 +122,13 @@ make
 # to run: bash hardnested.bash
 
 # for python gui
-sudo dnf install python3 python3-tkinter
-chmod +x $baseDir/mcgui 
-# to run: ./mcgui
+if [ $os == $ubuntuOS ]; then
+	sudo apt-get install python3 python3-tk -y 
+else
+	sudo dnf install python3 python3-tkinter -y	
+fi
+chmod +x $baseDir/mcgui.py 
+# to run: ./mcgui.py
 
 # Start cracking
 sudo service pcscd start
