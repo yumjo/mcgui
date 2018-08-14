@@ -1,17 +1,13 @@
 #!/usr/bin/env bash
 
-source ./guiHelper/guiConfig.bash # load environment variables
-
-# Get command line argument (keyfile name)
-# https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
 ! getopt --test > /dev/null 
 if [[ ${PIPESTATUS[0]} -ne 4 ]]; then
     echo "I’m sorry, `getopt --test` failed in this environment."
     exit 1
 fi
 
-OPTIONS=f:
-LONGOPTS=filename:
+OPTIONS=u:
+LONGOPTS=uid:
 
 ! PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTS --name "$0" -- "$@")
 if [[ ${PIPESTATUS[0]} -ne 0 ]]; then
@@ -19,11 +15,11 @@ if [[ ${PIPESTATUS[0]} -ne 0 ]]; then
 fi
 eval set -- "$PARSED"
 
-f=""
+u=-
 while true; do
     case "$1" in
-        -f|--filename)
-            filename=$2
+        -u|--uid)
+            uid=$2
             shift 2
             ;;
         --)
@@ -37,16 +33,13 @@ while true; do
     esac
 done
 
-if [ -f "$filename" ]; then # if loaded key file exists
-	mfoc -O $dumpFile -f $filename
-	retval=$?
-else
-        mfoc -O $dumpFile
-	retval=$?
-fi
+baseDir=$(realpath .)
+cdDir=$baseDir/cardDumps/
+filename="${cdDir}${uid}/${uid}_dump.hex"
 
-if [ retVal == 0 ]; then
-	echo -e "\nNested attack was successful!"	
+if [ -f "$filename" ]; then # if loaded key file exists
+	echo "Found card dump file for this UID. See below for file contents."	
+	hexdump -vC $filename
+else
+	echo "No card dump file found for this UID."
 fi
-echo -e "\nPress Enter to close the terminal."
-read line

@@ -14,7 +14,7 @@
 #   Doesn't delete cracked card dump once script completes
 
 # load environment variables
-source ./guiConfig.bash # load environment variables
+source ./guiHelper/guiConfig.bash # load environment variables
 
 # Get command line argument (keyfile name)
 # https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
@@ -51,8 +51,16 @@ while true; do
     esac
 done
 
+if [ ! -d $uidDir ]; then
+  mkdir $uidDir
+fi
+
+if [ ! -f "$keyFile" ]; then
+	touch $keyFile # create since does not exist
+fi
+
 if [ "$filename" != "" ]; then
-	cat $filename > $keyFile
+	cat $filename >> $keyFile
 fi
 
 cracked=0;
@@ -67,6 +75,7 @@ while [ $cracked -eq 0 ]; do
 
     if [ ! -s $partialDumpFile ]; then # if file empty, card cracked
         cracked=1;
+	echo -e "\nHard nested attack was successful!"
     else 
         echo "Running hard nested attack" 
         # to run: ./libnfc_crypto1_crack <known key> <for block> <A|B> <target block> <A|B> <key file>
@@ -102,3 +111,6 @@ while [ $cracked -eq 0 ]; do
 done
 
 rm $partialDumpFile
+
+echo -e "\nPress Enter to close the terminal."
+read line

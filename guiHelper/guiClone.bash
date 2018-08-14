@@ -2,8 +2,6 @@
 
 source ./guiHelper/guiConfig.bash # load environment variables
 
-# Get command line argument (keyfile name)
-# https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
 ! getopt --test > /dev/null 
 if [[ ${PIPESTATUS[0]} -ne 4 ]]; then
     echo "I’m sorry, `getopt --test` failed in this environment."
@@ -37,16 +35,21 @@ while true; do
     esac
 done
 
-if [ -f "$filename" ]; then # if loaded key file exists
-	mfoc -O $dumpFile -f $filename
-	retval=$?
-else
-        mfoc -O $dumpFile
-	retval=$?
-fi
+# write
+nfc-mfclassic W a $filename
 
-if [ retVal == 0 ]; then
-	echo -e "\nNested attack was successful!"	
+# read
+nfc-mfclassic R a output.hex $filename
+
+# compare output
+diff output.hex $filename # if not output, then same
+retVal=$?
+
+if [ $retVal == 0 ]; then
+	echo -e "\nClone was successful!"	
+else
+	echo -e "\nClone was not successful."
 fi
+rm output.hex
 echo -e "\nPress Enter to close the terminal."
 read line
