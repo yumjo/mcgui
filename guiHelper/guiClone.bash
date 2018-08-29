@@ -38,6 +38,9 @@ done
 # write
 nfc-mfclassic W a $filename
 
+# sleep to give reader time to be freed from previous operation
+sleep .3 
+
 # read
 nfc-mfclassic R a output.hex $filename
 
