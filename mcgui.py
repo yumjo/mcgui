@@ -13,7 +13,6 @@ class MifareGUI:
 		self.startWidth = 750
 		self.startHeight = 400
 		self.labelWidth = self.startWidth		
-		#self.labelWidth = 90
 		self.labelHeight = 5
 
 		# guiHelper files
@@ -34,53 +33,16 @@ class MifareGUI:
 		self.tabs = ttk.Notebook(self.mainframe, width=self.startWidth, height=self.startHeight)
 		self.tabs.pack(fill=BOTH, expand=1)
 		self.cardInfoTab = ttk.Frame(self.tabs)
-		self.crackingTab = ttk.Frame(self.tabs)  
+		self.crackingTab = ttk.Frame(self.tabs)
+		self.helpTab = ttk.Frame(self.tabs)  
 		self.tabs.add(self.crackingTab, text='Cracking')
 		self.tabs.add(self.cardInfoTab, text='Card Information')
-
-		# Card Information Tab
-		'''
-		# scrollbar --> need frame inside of canvas
-		self.scrollWidth = self.startWidth-10 
-		self.cardInfoCanvas = Canvas(self.cardInfoTab, width=self.scrollWidth, height=self.startHeight)
-		self.cardInfoCanvas.bind("<Configure>", self.set_cardInfoCanvas_width)
-		self.cardInfoCanvas.pack(side="left", fill=BOTH, expand=1)
-		self.cardInfoScrollFrame = ttk.Frame(self.cardInfoCanvas, width=self.scrollWidth, height=self.startHeight)
-		self.cardInfoScrollFrame.pack(fill=BOTH, expand=1)
-		self.scrollbar = ttk.Scrollbar(self.cardInfoTab, orient=VERTICAL, command=self.cardInfoCanvas.yview)
-		self.cardInfoCanvas.configure(yscrollcommand=self.scrollbar.set)
-		self.scrollbar.pack(side="right", fill="y")
-		self.cardInfoCanvas.create_window((0,0),window=self.cardInfoScrollFrame, anchor=NW)
-		self.cardInfoScrollFrame.bind("<Configure>", self.set_scrollbar)
-		self.divider1 = ttk.Separator(self.cardInfoScrollFrame, orient=HORIZONTAL).pack(fill=X)
-		self.generalLabel = ttk.Labelframe(self.cardInfoScrollFrame, text='General')
-		'''
-		
-		# General
-		self.divider1 = ttk.Separator(self.cardInfoTab, orient=HORIZONTAL).pack(fill=X)
-		self.generalLabel = ttk.Labelframe(self.cardInfoTab, text='General')
-		self.generalLabel.pack(fill=BOTH, expand=1)
-		self.generalText = Text(self.generalLabel, wrap='word', state='disabled', width=self.labelWidth, height=self.labelHeight)
-		self.generalText.pack(side="left",fill=BOTH, expand=1)
-		self.init_general_tb()
-
-		# Sector Keys		
-		self.sectorKeysLabel = ttk.Labelframe(self.cardInfoTab, text='Sector Keys')
-		self.sectorKeysLabel.pack(fill=BOTH, expand=1)
-		self.sectorKeysText = scrolledtext.ScrolledText(self.sectorKeysLabel, wrap='word', state='disabled', width=self.labelWidth, height=self.labelHeight)
-		self.sectorKeysText.pack(side="left",fill=BOTH, expand=1)
-		#self.sectorKeysText.pack(side="left", fill=X, expand=1)
-
-		# Card Dump
-		self.cardDumpLabel = ttk.Labelframe(self.cardInfoTab, text='Card Dump')
-		self.cardDumpLabel.pack(fill=BOTH, expand=1)
-		self.cardDumpText = scrolledtext.ScrolledText(self.cardDumpLabel, wrap='word',  state='disabled', width=self.labelWidth, height=self.labelHeight+5)
-		self.cardDumpText.pack(fill=BOTH, expand=1)
+		self.tabs.add(self.helpTab, text='Help')
 		
 		# Cracking Tab
 		# Check Card Type
-		self.divider = ttk.Separator(self.crackingTab, orient=HORIZONTAL).pack(fill=X)
-		self.disclaimer = ttk.Label(self.crackingTab, text='Disclaimer: This tool only works on Mifare Classic Cards. To check that a card is Mifare Classic, click the validate button. Otherwise, run an attack. Make sure the card is placed on the reader.', background="#fffacd", anchor=W)
+		self.divider2 = ttk.Separator(self.crackingTab, orient=HORIZONTAL).pack(fill=X)
+		self.disclaimer = ttk.Label(self.crackingTab, text='Disclaimer: This tool only works on Mifare Classic cards. To check that a card is Mifare Classic, click the validate button. Otherwise, run an attack. Make sure the card is placed on the reader.', background="#fffacd", anchor=W)
 		self.disclaimer.pack(fill=X, expand=1, anchor=N, ipadx=90, ipady=10)
 		self.disclaimer.bind("<Configure>", self.set_disclaimer_wrap)
 		self.checkCardTypeBtn = ttk.Button(self.crackingTab, text="Validate", command=self.check_card_type)
@@ -125,15 +87,45 @@ class MifareGUI:
 		self.loadKeyfileBtn.pack(in_=self.loadKeyfileLabel, side='bottom', anchor=E)
 		self.loadKeyfileLabel.pack(expand=1, ipadx=5, ipady=10, side='bottom')
 
-		# Text Box for Cracking Scripts	
+		# Output 	
 		self.outputLabel = ttk.Labelframe(self.crackingTab, text='Output')
 		self.outputLabel.pack(expand=1, side='bottom', anchor=CENTER)
 		self.outputBox = scrolledtext.ScrolledText(self.outputLabel, width=self.startWidth-10, height=self.startHeight, state='disabled', wrap='word')
 		self.outputBox.pack(in_=self.outputLabel, fill=BOTH, expand=1)
+		# TODO: Dynamic Font resizing		
+		#self.outputBox.config(font=(None, 12))
+		#self.outputLabel.bind("<Configure>", self.set_font_size)
 
+		# Card Information Tab
+		# General
+		self.divider1 = ttk.Separator(self.cardInfoTab, orient=HORIZONTAL).pack(fill=X)
+		self.generalLabel = ttk.Labelframe(self.cardInfoTab, text='General')
+		self.generalLabel.pack(fill=BOTH, expand=1)
+		self.generalText = Text(self.generalLabel, wrap='word', state='disabled', width=self.labelWidth, height=self.labelHeight)
+		self.generalText.pack(side="left",fill=BOTH, expand=1)
+		self.init_general_tb()
+
+		# Sector Keys		
+		self.sectorKeysLabel = ttk.Labelframe(self.cardInfoTab, text='Sector Keys')
+		self.sectorKeysLabel.pack(fill=BOTH, expand=1)
+		self.sectorKeysText = scrolledtext.ScrolledText(self.sectorKeysLabel, wrap='word', state='disabled', width=self.labelWidth, height=self.labelHeight)
+		self.sectorKeysText.pack(side="left",fill=BOTH, expand=1)
+
+		# Card Dump
+		self.cardDumpLabel = ttk.Labelframe(self.cardInfoTab, text='Card Dump')
+		self.cardDumpLabel.pack(fill=BOTH, expand=1)
+		self.cardDumpText = scrolledtext.ScrolledText(self.cardDumpLabel, wrap='word',  state='disabled', width=self.labelWidth, height=self.labelHeight+5)
+		self.cardDumpText.pack(fill=BOTH, expand=1)
+
+		# Help Tab
+		self.divider3 = ttk.Separator(self.helpTab, orient=HORIZONTAL).pack(fill=X)	
+	
+	# Start Function	
 	def start(self):
-		self.root.mainloop()	
-
+		self.root.mainloop()
+		# start pcscd service
+		# self.run_command_noput(["sudo", "service", "pcscd", "start"])	
+	
 	# Graphical Functions
 	def set_cardInfoCanvas_width(self, event):
 		newWidth = event.width-10 # minus to accommodate padding
@@ -399,7 +391,7 @@ class MifareGUI:
 				self.insert_outputBox("Found keyfile for this UID.")
 			if(result2 == True):
 				self.insert_outputBox("Found dumpfile for this UID.")
-			messagebox.showinfo("Check Complete", "Valid card Found. Card Information tab updated.")
+			messagebox.showinfo("Check Complete", "Valid card found. Card Information tab updated.")
 		else:
 			messagebox.showerror("Attention", "Invalid Card or Error.")
 		self.insert_outputBox("")
