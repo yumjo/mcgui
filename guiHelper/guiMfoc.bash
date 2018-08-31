@@ -55,8 +55,8 @@ fi
 
 if [ "$retVal" == 0 ] || [ -z "$retVal"]; then
 	./guiHelper/getKeysFromDump.py $dumpFile $keyFile
-	echo -e "\nNested attack was successful!"
-	echo -e "Click Update Files button on Cracking Tab to see changes."	
+	echo -e "\nThe nested atttack has completed."
+	echo -e "Click Update Files button on the Cracking Tab to see any changes."	
 fi
 echo -e "\nPress Enter to close the terminal."
 read line

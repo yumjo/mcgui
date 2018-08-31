@@ -21,6 +21,7 @@ class MifareGUI:
 		self.hardnested = fileDir + "guiHardnested.bash"
 		self.findKeysFile = fileDir + "findKeysFile.bash"
 		self.findDumpFile = fileDir + "findDumpFile.bash"
+		self.helptxtFile = fileDir + "help.txt"
 
 		self.root = Tk()
 		self.root.title("Mifare Cracking GUI")
@@ -118,7 +119,11 @@ class MifareGUI:
 		self.cardDumpText.pack(fill=BOTH, expand=1)
 
 		# Help Tab
-		self.divider3 = ttk.Separator(self.helpTab, orient=HORIZONTAL).pack(fill=X)	
+		self.divider3 = ttk.Separator(self.helpTab, orient=HORIZONTAL).pack(fill=X)
+		helpText = open(self.helptxtFile, "r").readlines()
+		self.help = ttk.Label(self.helpTab, text="\n".join(helpText))
+		self.help.pack(fill=X, expand=1, anchor=N)
+		self.help.bind("<Configure>", self.set_help_wrap)	
 	
 	# Start Function	
 	def start(self):
@@ -136,6 +141,10 @@ class MifareGUI:
 	
 	def set_disclaimer_wrap(self, event):
 		wraplength = event.width-90 # minus to accommodate padding
+		event.widget.configure(wraplength=wraplength)
+
+	def set_help_wrap(self, event):
+		wraplength = event.width
 		event.widget.configure(wraplength=wraplength)
 
 	# General text input functions

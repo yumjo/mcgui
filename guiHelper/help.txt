@@ -1,0 +1,9 @@
+Cracking Tab
+- Validate: This button identifies the card currently on the reader. If successful, it retrieves the UID, ATR, and SAK. If the card has been cracked with the GUI before and the UID is recognized, mcgui will automatically load the corresponding key file and card dump in the Card Information tab.
+- Crack: Crack runs the selected attack with the hard nested attack as the default. The hard nested script runs both the nested and hard nested attacks, so this selection can be run on both original and hardened cards.	
+- Keyfile & Dumpfile Buttons: A keyfile can be loaded to use with the hard nested and nested attacks. A dumpfile can be loaded for cloning. If an attack modifies these files (i.e. new keys found), the update files button will update the Card Information tab to reflect the changes.  
+- Clone: Clone attempts to write the loaded card dump to the card currently on the reader. A verfication window will pop up before the operation runs to ensure the user really wants to write to the card on the reader.
+
+Card Information Tab
+- The card information tab presents the information that has been retrieved during successful cracking tab operations, such as recovered keys and the cracked card dump.
+
