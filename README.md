@@ -22,7 +22,7 @@ The [install.bash](install.bash) downloads and configures all the necessary prog
 - [pcsc-tools](https://github.com/LudovicRousseau/pcsc-tools)
 
 # Hard Nested Attack
-The hard nested attack depends on the CraptEV1 code developed by Bla. See this link for further information: https://github.com/aczid/crypto1_bs/issues/29. 
+The hard nested attack depends on the CraptEV1 code developed by Bla. See this link for further information: https://github.com/aczid/crypto1_bs/issues/29. The installation script has instructions on what to do once these files are acquired.
 
 _Note: A modified version of [miLazyCracker](https://github.com/nfc-tools/miLazyCracker) is used to run the hard nested attack. See [hardnested.bash](hardnested/hardnested.bash) for more information._
 
