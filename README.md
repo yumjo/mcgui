@@ -3,7 +3,7 @@ The Mifare Cracking GUI (mcgui) identifies, cracks, and clones both original and
 # Requirements
 - **USB NFC reader:** Mcgui was tested with a ACR122U reader. Mcgui configures libnfc to work with this reader's driver.
 - **Linux OS:** The OS cannot be virtualized as the USB controller for virtual machines does not play well with NFC readers. The installation script was tailored to and tested on Ubuntu 18.04.3 LTS (Bionic Beaver).
-***Archive:*** The installation script in the Archive folder was tested on Fedora 28 and Ubuntu 18.0.1 LTS.
+***Archive:*** The installation script in commit cb5c8d95f1f200be3d15a8498f62fd776969535e was tested on Fedora 28 and Ubuntu 18.0.1 LTS.
 - **Mifare Classic Cards:** Mcgui was tested with Mifare Classic 1K cards, original and hardened.
 
 # Installation
