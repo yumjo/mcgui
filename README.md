@@ -2,7 +2,8 @@ The Mifare Cracking GUI (mcgui) identifies, cracks, and clones both original and
 
 # Requirements
 - **USB NFC reader:** Mcgui was tested with a ACR122U reader. Mcgui configures libnfc to work with this reader's driver.
-- **Linux OS:** The OS cannot be virtualized as the USB controller for virtual machines does play well with NFC readers. The installation script is tailored to Fedora and Ubuntu. The script was tested on Fedora 28 and Ubuntu 18.0.1 LTS.
+- **Linux OS:** The OS cannot be virtualized as the USB controller for virtual machines does not play well with NFC readers. The installation script was tailored to and tested on Ubuntu 18.04.3 LTS (Bionic Beaver).
+***Archive:*** The installation script in the Archive folder was tested on Fedora 28 and Ubuntu 18.0.1 LTS.
 - **Mifare Classic Cards:** Mcgui was tested with Mifare Classic 1K cards, original and hardened.
 
 # Installation
@@ -19,6 +20,9 @@ The [install.bash](install.bash) downloads and configures all the necessary prog
 - [mfoc](https://github.com/nfc-tools/mfoc)
 - [mfcuk](https://github.com/nfc-tools/mfcuk)
 - [pcsc-tools](https://github.com/LudovicRousseau/pcsc-tools)
+
+# Hard Nested Attack
+The hard nested attack depends on the CraptEV1 code developed by Bla. See this link for further information: https://github.com/aczid/crypto1_bs/issues/29. 
 
 _Note: A modified version of [miLazyCracker](https://github.com/nfc-tools/miLazyCracker) is used to run the hard nested attack. See [hardnested.bash](hardnested/hardnested.bash) for more information._
 
